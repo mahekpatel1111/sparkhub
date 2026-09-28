@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SparkHub - Life & Study Command Center</title>
+  <style>
+    /* Global Styles & Playful Theme */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Comic Sans MS', 'Fredoka', 'Segoe UI', Tahoma, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #a1c4fd 100%);
+      min-height: 100vh;
+      color: #2c3e50;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      animation: bounceIn 1s ease-in-out;
+    }
+
+    h1 {
+      font-size: 3rem;
+      color: #fff;
+      text-shadow: 3px 3px 0px #ff3b6b, 6px 6px 0px #6c5ce7;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #4a4a4a;
+      background: rgba(255, 255, 255, 0.7);
+      display: inline-block;
+      padding: 6px 18px;
+      border-radius: 20px;
+      backdrop-filter: blur(5px);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Navigation / Mode Selector Buttons */
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .nav-card {
+      background: white;
+      border: 4px solid #fff;
+      border-radius: 25px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .nav-card:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-card.active {
+      border-color: #6c5ce7;
+      background: #fdcb6e;
+    }
+
+    .nav-card .icon {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+
+    .nav-card h3 {
+      font-size: 1.3rem;
+      color: #2d3436;
+    }
+
+    /* Content Modules */
+    .module {
+      display: none;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 30px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      border: 5px solid #ffeaa7;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .module.active {
+      display: block;
+    }
+
+    .module-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .module-header h2 {
+      font-size: 2rem;
+      color: #6c5ce7;
+    }
+
+    /* Form & Option Grid */
+    .option-group {
+      margin-bottom: 20px;
+    }
+
+    .option-group label {
+      display: block;
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #2d3436;
+    }
+
+    .btn-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .select-btn {
+      background: #a29bfe;
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 15px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 5px 0px #6c5ce7;
+      transition: all 0.1s ease;
+    }
+
+    .select-btn:hover {
+      background: #74b9ff;
+      box-shadow: 0 5px 0px #0984e3;
+    }
+
+    .select-btn:active, .select-btn.selected {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0px #0984e3;
+      background: #00b894;
+    }
+
+    /* Custom Input Fields */
+    .input-field {
+      width: 100%;
+      padding: 15px;
+      border-radius: 15px;
+      border: 3px solid #74b9ff;
+      font-size: 1.1rem;
+      outline: none;
+      margin-top: 8px;
+    }
+
+    .action-btn {
+      width: 100%;
+      background: #ff7675;
+      color: white;
+      border: none;
+      padding: 18px;
+      border-radius: 20px;
+      font-size: 1.4rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 8px 0px #d63031;
+      margin-top: 20px;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+      background: #ff7675;
+      transform: scale(1.02);
+    }
+
+    .action-btn:active {
+      transform: translateY(6px);
+      box-shadow: 0 2px 0px #d63031;
+    }
+
+    /* Result Box */
+    .result-box {
+      margin-top: 25px;
+      background: #eccc68;
+      border-radius: 20px;
+      padding: 20px;
+      border: 4px dashed #ff6b81;
+      display: none;
+      animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .result-box h3 {
+      font-size: 1.5rem;
+      color: #2ed573;
+      text-shadow: 1px 1px 0px #fff;
+      margin-bottom: 10px;
+    }
+
+    .result-content {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #2f3542;
+    }
+
+    .task-item {
+      background: white;
+      padding: 10px 15px;
+      border-radius: 12px;
+      margin: 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: bold;
+    }
+
+    /* Animations */
+    @keyframes bounceIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.05); }
+      70% { transform: scale(0.9); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popUp {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Confetti Styling */
+    .confetti {
+      position: fixed;
+      width: 12px;
+      height: 12px;
+      top: -10px;
+      z-index: 999;
+      animation: fall 3s linear infinite;
+    }
+
+    @keyframes fall {
+      to { transform: translateY(100vh) rotate(720deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🚀 SparkHub</h1>
+    <p class="subtitle">Your Fun, Interactive Life & Study Rescue Center!</p>
+  </header>
+
+  <div class="container">
+
+    <!-- Navigation Buttons -->
+    <div class="nav-grid">
+      <div class="nav-card active" onclick="switchTab('study')">
+        <div class="icon">📚</div>
+        <h3>Exam & Study Urgent Rescue</h3>
+      </div>
+      <div class="nav-card" onclick="switchTab('money')">
+        <div class="icon">💸</div>
+        <h3>Smart Money & Budget Survival</h3>
+      </div>
+      <div class="nav-card" onclick="switchTab('habits')">
+        <div class="icon">⚡</div>
+        <h3>Habit & Screen-Time Reset</h3>
+      </div>
+    </div>
+
+    <!-- MODULE 1: STUDY RESCUE -->
+    <div id="study-module" class="module active">
+      <div class="module-header">
+        <h2>🔥 Urgent Study & Exam Rescue</h2>
+        <p>Tell us what emergency you are facing right now!</p>
+      </div>
+
+      <div class="option-group">
+        <label>1. What is your current situation?</label>
+        <div class="btn-grid">
+          <button class="select-btn" onclick="selectOption(this, 'situation', 'exam')">🚨 Huge Syllabus, Exam Soon!</button>
+          <button class="select-btn" onclick="selectOption(this, 'situation', 'assignment')">⏳ Assignment Due Fast!</button>
+          <button class="select-btn" onclick="selectOption(this, 'situation', 'stuck')">❓ Stuck on Hard Questions</button>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <label>2. How much time do you have left?</label>
+        <div class="btn-grid">
+          <button class="select-btn" onclick="selectOption(this, 'time', '2hrs')">⚡ Only 2 Hours</button>
+          <button class="select-btn" onclick="selectOption(this, 'time', 'tonight')">🌙 One Night Left</button>
+          <button class="select-btn" onclick="selectOption(this, 'time', '2days')">📅 2 to 3 Days</button>
+        </div>
+      </div>
+
+      <button class="action-btn" onclick="generateStudyPlan()">✨ Generate My Rescue Action Plan!</button>
+
+      <div id="study-result" class="result-box">
+        <h3>🎯 Here is Your Action Plan:</h3>
+        <div class="result-content" id="study-output"></div>
+      </div>
+    </div>
+
+    <!-- MODULE 2: MONEY SURVIVAL -->
+    <div id="money-module" class="module">
+      <div class="module-header">
+        <h2>💰 Money & Expense Calculator</h2>
+        <p>Calculate your daily safe spend limit and navigate budget troubles!</p>
+      </div>
+
+      <div class="option-group">
+        <label>How much money do you currently have left?</label>
+        <input type="number" id="current-money" class="input-field" placeholder="Enter amount (e.g., 50)">
+      </div>
+
+      <div class="option-group">
+        <label>How many days until your next money/allowance comes?</label>
+        <input type="number" id="days-left" class="input-field" placeholder="Enter number of days (e.g., 10)">
+      </div>
+
+      <div class="option-group">
+        <label>What is your biggest spending challenge right now?</label>
+        <div class="btn-grid">
+          <button class="select-btn" onclick="selectOption(this, 'money-goal', 'food')">🍔 Food & Daily Essentials</button>
+          <button class="select-btn" onclick="selectOption(this, 'money-goal', 'bills')">📑 Pending Bills / Dues</button>
+          <button class="select-btn" onclick="selectOption(this, 'money-goal', 'impulse')">🛍️ Impulse Spending</button>
+        </div>
+      </div>
+
+      <button class="action-btn" onclick="calculateMoneyPlan()">💡 Calculate Safe Spending Plan</button>
+
+      <div id="money-result" class="result-box">
+        <h3>📊 Your Financial Safety Plan:</h3>
+        <div class="result-content" id="money-output"></div>
+      </div>
+    </div>
+
+    <!-- MODULE 3: HABIT RESET -->
+    <div id="habits-module" class="module">
+      <div class="module-header">
+        <h2>🌈 Habit & Screen Time Reset</h2>
+        <p>Break distractions, set your gym routine, or lock in your focus!</p>
+      </div>
+
+      <div class="option-group">
+        <label>What habit do you want to transform today?</label>
+        <div class="btn-grid">
+          <button class="select-btn" onclick="selectOption(this, 'habit-type', 'screen')">📱 Reduce Screen Time</button>
+          <button class="select-btn" onclick="selectOption(this, 'habit-type', 'gym')">🏋️ Pick Up Gym / Fitness</button>
+          <button class="select-btn" onclick="selectOption(this, 'habit-type', 'focus')">🧠 Fix Routine & Focus</button>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <label>What is holding you back most?</label>
+        <div class="btn-grid">
+          <button class="select-btn" onclick="selectOption(this, 'hurdle', 'lazy')">😴 Low Energy / Lazy</button>
+          <button class="select-btn" onclick="selectOption(this, 'hurdle', 'distraction')">📲 Scrolling Reels/TikTok</button>
+          <button class="select-btn" onclick="selectOption(this, 'hurdle', 'notime')">⏰ "No Time in my Day"</button>
+        </div>
+      </div>
+
+      <button class="action-btn" onclick="generateHabitPlan()">🚀 Unlock My Custom Routine</button>
+
+      <div id="habit-result" class="result-box">
+        <h3>⭐ Your Custom Strategy:</h3>
+        <div class="result-content" id="habit-output"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Selections Store
+    const selections = {};
+
+    // Tab Switcher
+    function switchTab(tabName) {
+      document.querySelectorAll('.module').forEach(mod => mod.classList.remove('active'));
+      document.querySelectorAll('.nav-card').forEach(card => card.classList.remove('active'));
+
+      if (tabName === 'study') {
+        document.getElementById('study-module').classList.add('active');
+        event.currentTarget.classList.add('active');
+      } else if (tabName === 'money') {
+        document.getElementById('money-module').classList.add('active');
+        event.currentTarget.classList.add('active');
+      } else if (tabName === 'habits') {
+        document.getElementById('habits-module').classList.add('active');
+        event.currentTarget.classList.add('active');
+      }
+    }
+
+    // Single Button Selection Handler
+    function selectOption(btn, category, value) {
+      const parentGrid = btn.parentElement;
+      parentGrid.querySelectorAll('.select-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selections[category] = value;
+    }
+
+    // Confetti Effect Generator
+    function launchConfetti() {
+      const colors = ['#ff7675', '#74b9ff', '#55efc4', '#ffeaa7', '#a29bfe'];
+      for (let i = 0; i < 30; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+        document.body.appendChild(confetti);
+
+        setTimeout(() => confetti.remove(), 3000);
+      }
+    }
+
+    // MODULE 1: STUDY LOGIC
+    function generateStudyPlan() {
+      const sit = selections['situation'];
+      const time = selections['time'];
+      const output = document.getElementById('study-output');
+      const box = document.getElementById('study-result');
+
+      if (!sit || !time) {
+        alert("Please pick both options above to unlock your plan! 🎯");
+        return;
+      }
+
+      let HTML = '';
+
+      if (sit === 'exam') {
+        HTML = `
+          <div class="task-item">1. Emergency Rule: Put phone on Airplane mode for 45 mins.</div>
+          <div class="task-item">2. Focus 80/20: Find summary diagrams or past paper answer keys first. Do not read entire chapters!</div>
+          <div class="task-item">3. Pomodoro Protocol: Study 25 mins hard, rest 5 mins (repeat 3x).</div>
+        `;
+      } else if (sit === 'assignment') {
+        HTML = `
+          <div class="task-item">1. Quick Breakdown: Split assignment into Intro, 3 Main Bullets, & Conclusion.</div>
+          <div class="task-item">2. Skeleton First: Write rough sentences for all sections without worrying about mistakes.</div>
+          <div class="task-item">3. Polish Round: Use AI/Grammar tools to refine phrasing in the final 15 minutes.</div>
+        `;
+      } else {
+        HTML = `
+          <div class="task-item">1. Feynman Technique: Try explaining the problem aloud in simple words to a imaginary 5-year-old.</div>
+          <div class="task-item">2. Reverse Engineer: Find a worked-out example similar to your problem and copy the pattern backwards.</div>
+          <div class="task-item">3. Ask Specific Questions: Don't ask "How do I do this?", ask "Why did step 2 happen here?"</div>
+        `;
+      }
+
+      output.innerHTML = HTML;
+      box.style.display = 'block';
+      launchConfetti();
+    }
+
+    // MODULE 2: MONEY LOGIC
+    function calculateMoneyPlan() {
+      const money = parseFloat(document.getElementById('current-money').value);
+      const days = parseFloat(document.getElementById('days-left').value);
+      const challenge = selections['money-goal'];
+      const output = document.getElementById('money-output');
+      const box = document.getElementById('money-result');
+
+      if (isNaN(money) || isNaN(days) || days <= 0) {
+        alert("Please enter valid positive numbers for money and days! 💵");
+        return;
+      }
+
+      const dailyLimit = (money / days).toFixed(2);
+      let strategy = '';
+
+      if (dailyLimit < 5) {
+        strategy = "⚠️ **Extreme Budget Alert:** Stick purely to home cooking and freeze non-essential purchases immediately!";
+      } else {
+        strategy = "✅ **Manageable Budget:** Set a hard daily spending cap and track every dollar spent in your notes app.";
+      }
+
+      output.innerHTML = `
+        <div class="task-item">💰 Daily Safe Spending Cap: <strong>$${dailyLimit} / day</strong> for the next ${days} days.</div>
+        <div class="task-item">🎯 Strategic Advice: ${strategy}</div>
+        <div class="task-item">🛑 Golden Rule: Use the "24-Hour Cooling Off Rule" for non-essential purchases!</div>
+      `;
+
+      box.style.display = 'block';
+      launchConfetti();
+    }
+
+    // MODULE 3: HABIT LOGIC
+    function generateHabitPlan() {
+      const type = selections['habit-type'];
+      const hurdle = selections['hurdle'];
+      const output = document.getElementById('habit-output');
+      const box = document.getElementById('habit-result');
+
+      if (!type || !hurdle) {
+        alert("Please pick both options to build your strategy! ⚡");
+        return;
+      }
+
+      let HTML = '';
+
+      if (type === 'screen') {
+        HTML = `
+          <div class="task-item">📱 Screen Hack: Switch screen color to Grayscale (Black & White). Social media immediately becomes boring!</div>
+          <div class="task-item">🔒 Friction Tactic: Place social media apps inside a deep folder on page 3 of your home screen.</div>
+        `;
+      } else if (type === 'gym') {
+        HTML = `
+          <div class="task-item">👟 2-Minute Rule: Just put on workout shoes and stand outside. You don't have to workout unless you want to!</div>
+          <div class="task-item">🗓️ Micro Workouts: Start with just 10 pushups or a 5-minute walk daily to build the habit trigger.</div>
+        `;
+      } else {
+        HTML = `
+          <div class="task-item">🧘 Daily Anchor: Link your study/focus block directly after an existing routine (e.g., "Right after morning coffee").</div>
+          <div class="task-item">📝 Single Target: Write down ONLY 1 major thing you must complete today on a post-it note.</div>
+        `;
+      }
+
+      output.innerHTML = HTML;
+      box.style.display = 'block';
+      launchConfetti();
+    }
+  </script>
+</body>
+</html>
+  
